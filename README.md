@@ -1,5 +1,7 @@
 # kuma_pomogator
 
+English version below
+
 Сервис на python с веб-интерфейсом, который позволяет выполнять некоторые операции с KUMA с помощью интерфейса через public REST API
 
 # Требования
@@ -103,3 +105,113 @@ python main.py
 1. Сервис не сохраняет свое состояние - при перезагрузке вкладки все введенные данные нужно будет вводить заново, в т.ч. адрес и токен и выполнять подключение.
 2. При выборе большого ресурса для анализа (например, парсер Cisco) могут наблюдаться зависания интерфейса. В таком случае рекомендуется скопировать ресурс и проанализировать его, например, в notepad++.
 3. Все файлы для скачивания имеют рандомное название, что связано с использованием tempfile.
+
+---
+
+# English version
+
+# kuma_pomogator
+
+A Python service with a web interface that allows you to perform various operations with KUMA via the public REST API.
+
+# Requirements
+
+Install the required dependencies:
+
+```
+pip install requirements.txt
+```
+
+or
+
+```
+python -m pip install requirements.txt
+```
+
+# Quick start
+
+Navigate to the script directory and run:
+
+```
+python main.py
+```
+
+The web interface will be available at `http://127.0.0.1:7860`
+
+To override the address, port, or server protocol, use environment variables. See the [gradio](https://www.gradio.app/guides/environment-variables) documentation for details.
+
+# Usage
+
+To get started, enter the address, API port, and token for the KUMA core in the top section of the interface and click Connect. If the provided credentials are correct, Status: Connected will appear below the button and the main tabs will become visible.
+
+## Export tab
+
+This tab allows you to export alerts, incidents, and correlation rules in CSV format.
+
+Timestamp filter fields for alerts and incidents are optional.
+
+Required permissions for alert export:
+
+- GET /alerts
+
+Required permissions for incident export:
+
+- GET /incidents
+
+Required permissions for correlation rules export:
+
+- GET /tenants
+- GET /services
+- GET /services/:kind/:id
+- GET /resources
+
+## Assets tab
+
+This tab allows you to import assets in CSV format. The expected format is shown in the web interface.
+
+If a field is not applicable for an asset, leave it empty.
+
+If a field value contains a comma, wrap the value in double quotes.
+
+The service does not validate the correctness of the provided data (IP, FQDN, MAC). If any of these fields contain an error for even a single asset, the entire list will not be imported, and a popup error will appear indicating the problematic asset.
+
+You must also specify the tenant into which the assets will be imported.
+
+Required permissions for asset import:
+
+- GET /tenants
+- POST /assets/import
+
+## Backup/Restore tab
+
+This tab allows you to download a backup of the core archive, as well as upload a backup and start the restore procedure.
+
+Since creating a backup may take some time for large databases — please be patient and do not close the browser tab (you may navigate away from the tab and the backup will still be available when you return).
+
+Required permissions for backup creation:
+
+- GET /system/backup
+
+Required permissions for backup restoration:
+
+- POST /system/restore
+
+## Analyzer tab
+
+This tab allows you to analyze any KUMA resource in JSON format.
+
+The resource type is required. The resource name is optional, but specifying it will reduce search time. Note that the resource name is treated as a regular expression.
+
+Once the resources are found, select the one you are interested in from the dropdown menu and click the button below — the resource will be displayed in JSON format.
+
+To copy the resource, click the copy icon in the top right corner of the JSON window.
+
+Required permissions for resource viewing:
+
+- GET /resources
+
+# Known limitations
+
+1. The service does not preserve its state — all entered data, including the address, token, and connection, must be re-entered after refreshing the page.
+2. When selecting a large resource for analysis (e.g., the Cisco parser), the interface may become unresponsive. In this case, it is recommended to copy the resource and analyze it in an external tool such as Notepad++.
+3. All downloadable files have random names due to the use of tempfile.
