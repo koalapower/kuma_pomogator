@@ -133,7 +133,7 @@ python -m pip install requirements.txt
 Navigate to the script directory and run:
 
 ```
-python main.py
+python main-en.py
 ```
 
 The web interface will be available at `http://127.0.0.1:7860`
