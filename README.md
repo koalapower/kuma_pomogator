@@ -4,10 +4,16 @@
 
 # Требования
 
-Для корректной работы необходимо установить gradio последней версии командой
+Для корректной работы необходимо установить зависимости
 
 ```
-pip install gradio --upgrade
+pip install requirements.txt
+```
+
+или
+
+```
+python -m pip install requirements.txt
 ```
 
 # Быстрый старт
