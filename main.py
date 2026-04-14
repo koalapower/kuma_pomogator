@@ -14,6 +14,19 @@ CSS = """
     background: #FFFFFF !important;
     color: white !important;
 }
+#export_alerts_hidden {
+    display: none;
+}
+#export_incidents_hidden {
+    display: none;
+}
+#export_rules_hidden {
+    display: none;
+}
+#export_backup_hidden {
+    display: none;
+}
+
 """
 
 
@@ -325,7 +338,6 @@ def get_alerts_csv(status, time_field, start, end):
     if result['status'] == new_kuma.OK:
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".csv")
         temp_path = temp_file.name
-        
         with open(temp_path, 'w', newline='', encoding='utf8') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
             writer.writerow(['name', 'id', 'status', 'first_seen','last_seen', 'assignee', 'tenantName', 'tenantID'])
@@ -503,7 +515,7 @@ def prepare_tenants_and_correlators_dd(choice):
 
 new_kuma = Kuma()
 
-with gr.Blocks(theme=gr.themes.Ocean(), css=CSS) as block_main:
+with gr.Blocks() as block_main:
     
     gr.Markdown("# KUMA's User Assistant")
 
@@ -561,8 +573,7 @@ with gr.Blocks(theme=gr.themes.Ocean(), css=CSS) as block_main:
                             alert_end = gr.DateTime(label="To", type='datetime')
 
                 export_alerts = gr.Button("Export alerts to CSV")
-                export_alerts_hidden = gr.DownloadButton(visible=False, 
-                                                         elem_id='export_alerts_hidden')
+                export_alerts_hidden = gr.DownloadButton(elem_id='export_alerts_hidden')
 
                 export_alerts.click(fn=get_alerts_csv, 
                                     inputs=[alert_status, alert_time_field, alert_start, alert_end], 
@@ -590,8 +601,7 @@ with gr.Blocks(theme=gr.themes.Ocean(), css=CSS) as block_main:
                             incident_end = gr.DateTime(label="To", type='datetime')
 
                 export_incidents = gr.Button("Export incidents to CSV")
-                export_incidents_hidden = gr.DownloadButton(visible=False, 
-                                                         elem_id='export_incidents_hidden')
+                export_incidents_hidden = gr.DownloadButton(elem_id='export_incidents_hidden')
 
                 export_incidents.click(fn=get_incidents_csv, 
                                     inputs=[incident_status, incident_time_field, incident_start, incident_end], 
@@ -619,7 +629,7 @@ with gr.Blocks(theme=gr.themes.Ocean(), css=CSS) as block_main:
                        label="Tenant")
 
                 export_rules = gr.Button("Download rules in CSV", visible=True)
-                export_rules_hidden = gr.DownloadButton(visible=False, elem_id='export_rules_hidden')
+                export_rules_hidden = gr.DownloadButton(elem_id='export_rules_hidden')
 
                 export_tab.select(fn=prepare_tenants_and_correlators_dd, inputs=rules_option, outputs=[rules_correlators, rules_tenants])
                 rules_option.change(fn=prepare_tenants_and_correlators_dd, inputs=rules_option, outputs=[rules_correlators, rules_tenants])
@@ -672,7 +682,7 @@ with gr.Blocks(theme=gr.themes.Ocean(), css=CSS) as block_main:
             with gr.Column():
 
                 export_backup = gr.Button("Create and download Backup", visible=True)
-                export_backup_hidden = gr.DownloadButton(visible=False, elem_id='export_backup_hidden')
+                export_backup_hidden = gr.DownloadButton(elem_id='export_backup_hidden')
                 export_backup.click(fn=get_backup, 
                                         inputs=None, 
                                         outputs=export_backup_hidden, api_name="process").then(fn=None, 
@@ -724,4 +734,4 @@ with gr.Blocks(theme=gr.themes.Ocean(), css=CSS) as block_main:
 
     
 if __name__ == "__main__":
-    block_main.launch()
+    block_main.launch(theme=gr.themes.Ocean(), css=CSS)
